@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main.*
+import java.lang.NullPointerException
 
 class MainActivity : AppCompatActivity() {
     @SuppressLint("Range")
@@ -63,6 +64,29 @@ class MainActivity : AppCompatActivity() {
                 }while (cursor.moveToNext())
             }
             cursor.close()
+        }
+
+        replaceData.setOnClickListener {
+            val db = dbHelper.writableDatabase
+            db.beginTransaction()
+            try{
+                db.delete("Book",null,null)
+//                if(true){
+//                    throw NullPointerException()
+//                }
+                val values = ContentValues().apply {
+                    put("name","Game of Thrones")
+                    put("author","George Martin")
+                    put("pages",720)
+                    put("price",20.85)
+                }
+                db.insert("Book",null,values)
+                db.setTransactionSuccessful()
+            }catch (e: Exception){
+                e.printStackTrace()
+            }finally {
+                db.endTransaction()
+            }
         }
     }
 }
